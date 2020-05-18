@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #controller {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            border: 2px solid rgb(18, 10, 37);
+        }
+        
+        #chatbox {
+            width: 200px;
+            height: 100px;
+        }
+    </style>
+    <title>inchat</title>
+
+</head>
+
+<body>
+
+    <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCfVpGSZNl3buD-avb_pF1z6Enj2jf5wpE",
+            authDomain: "inchat-3546c.firebaseapp.com",
+            databaseURL: "https://inchat-3546c.firebaseio.com",
+            projectId: "inchat-3546c",
+            storageBucket: "inchat-3546c.appspot.com",
+            messagingSenderId: "796123823625",
+            appId: "1:796123823625:web:da4071667dc8f05de382d8",
+            measurementId: "G-67P8G42D2W"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        var database = firebase.database();
+
+        // setting some data
+        function setData() {
+            var text = document.getElementById("chatbox").value;
+            database.ref('chat/messages/').set({
+                what: text
+            });
+            outputData();
+            clearTextArea();
+        }
+
+
+        function outputData() {
+            var mess = database.ref('chat/messages/what/');
+            mess.once("value").then(function (object) {
+                console.log(object.val());
+                var content = document.createElement("p");
+                var text = document.createTextNode(object.val());
+                content.appendChild(text);
+                var container = document.getElementById("container");
+                container.appendChild(content);
+            });
+
+        }
+
+        function clearTextArea() {
+            document.getElementById("chatbox").value = "";
+        }
+
+
+    </script>
+
+    <div id="container"></div>
+
+    <div id="controller">
+        <textarea id="chatbox"></textarea>
+        <button onclick="setData();">send</button>
+    </div>
+
+</body>
+
+</html>
