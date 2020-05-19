@@ -41,27 +41,33 @@
         firebase.analytics();
         var database = firebase.database();
 
+
         // setting some data
         function setData() {
+            var rand_num = parseInt(Math.random() * Math.floor(200000)); 
             var text = document.getElementById("chatbox").value;
-            database.ref('chat/messages/').set({
-                what: text
-            });
+            database.ref('chat/messages/' + rand_num).set(text);
             outputData();
             clearTextArea();
         }
 
-
+        outputData();
         function outputData() {
-            var mess = database.ref('chat/messages/what/');
-            mess.once("value").then(function (object) {
-                console.log(object.val());
-                var content = document.createElement("p");
-                var text = document.createTextNode(object.val());
-                content.appendChild(text);
-                var container = document.getElementById("container");
-                container.appendChild(content);
-            });
+            
+            database.ref("chat/messages").once("value").then(function (snapshot) {
+                document.getElementById("container").innerHTML="";
+                snapshot.forEach(function(childSnapshot) {
+                    // get key and data from child
+                    var key = childSnapshot.key;
+                    var childData = childSnapshot.val()
+                    // create messagedisplay
+                    var content = document.createElement("p");
+                    var text = document.createTextNode(childData);
+                    content.appendChild(text);
+                    var container = document.getElementById("container");
+                    container.appendChild(content);
+                })
+            })
 
         }
 
